@@ -25,9 +25,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.withClient("angular") //qual é o nome do Client
 		.secret("@ngul@r0") //qual é a senha do Client
 		.scopes("read", "write") //uma String define o escopo do cliente. Com ele, pode-se evitar o acesso do cliente angular.Podem ser definidos escopos != p/ clientes !=. O tratamento dessas Strings é feito nos métodos.
-		.authorizedGrantTypes("password") //Tipos de concessão autorizados-O usuário digita usuário e senha na tela do Angular e o Angular no JavaScript recebe esse usuário e senha e envia p/ pegar o Access Token.O Angular tem acesso ao usuário e à senha. Isso só é feito qdo. se tem extrema confiança na aplicação. Como a aplicação Angular será feita no curso, essa é a configuração ideal p/ utilizar.
-		.accessTokenValiditySeconds(1800); //Qtos. segundos o token ficará ativo. Nesse caso, será 30 minutos.
-		super.configure(clients);
+		.authorizedGrantTypes("password", "refresh_token") //Tipos de concessão autorizados-O usuário digita usuário e senha na tela do Angular e o Angular no JavaScript recebe esse usuário e senha e envia p/ pegar o Access Token.O Angular tem acesso ao usuário e à senha. Isso só é feito qdo. se tem extrema confiança na aplicação. Como a aplicação Angular será feita no curso, essa é a configuração ideal p/ utilizar.**Adicionar o novo granType chamado refresh_token. será possível usar o Refresh Token para fornecer o Access Token.
+		.accessTokenValiditySeconds(20) //Tempo de vida do Access Token.
+		.refreshTokenValiditySeconds(3600 * 24); //Tempo de vida do Refresh Token, que será de 1 dia.		
 	}
 
 	@Override
@@ -35,6 +35,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		endpoints
 			.tokenStore(tokenStore()) //O Token será armazendo em um Token Store. Porque a aplicação Angular vai buscar o Token e vai mandá-lo de volta p/ conseguir acessar a API(/lancamentos).O Token tem que estar armazenado em algum lugar, p/ saber se ele é válido ou inválido.
 			.accessTokenConverter(accessTokenConverter())
+			.reuseRefreshTokens(false) //Sempre q/ pedir um novo Access Token com Refresh Token, um novo Reresh Token será enviado. A ideia é que o usuário não se deslogue da aplicação enquanto estiver usando. Se ele usa a aplicação todos os dias, o Refresh Token não expira e é possível buscar novos Access Tokens p/ usar na API. Se não foi settado como false, o refresh Token vai durar apenas 24 horas.  
 			.authenticationManager(authenticationManager); //Para validar o usuário e a senha e ver se está tudo certo.
 	}
 	
