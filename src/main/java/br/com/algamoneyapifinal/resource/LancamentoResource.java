@@ -25,6 +25,7 @@ import br.com.algamoneyapifinal.event.RecursoCriadoEvent;
 import br.com.algamoneyapifinal.model.Lancamento;
 import br.com.algamoneyapifinal.repository.LancamentoRepository;
 import br.com.algamoneyapifinal.repository.filter.LancamentoFilter;
+import br.com.algamoneyapifinal.repository.projection.ResumoLancamento;
 import br.com.algamoneyapifinal.service.LancamentoService;
 
 @RestController
@@ -50,6 +51,11 @@ public class LancamentoResource {
 		Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalvo.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
+	}
+	
+	@GetMapping(params = "resumo")
+	public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+		return lancamentoRepository.resumir(lancamentoFilter, pageable);
 	}
 	
 	@GetMapping("/{codigo}")
