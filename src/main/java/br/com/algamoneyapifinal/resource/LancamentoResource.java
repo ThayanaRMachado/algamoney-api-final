@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.algamoneyapifinal.event.RecursoCriadoEvent;
 import br.com.algamoneyapifinal.model.Lancamento;
 import br.com.algamoneyapifinal.repository.LancamentoRepository;
+import br.com.algamoneyapifinal.repository.filter.LancamentoFilter;
 import br.com.algamoneyapifinal.service.LancamentoService;
 
 @RestController
@@ -39,8 +40,8 @@ public class LancamentoResource {
 	private LancamentoService lancamentoService;
 	
 	@GetMapping
-	public List<Lancamento> pesquisars() {
-		return lancamentoRepository.findAll();
+	public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
+		return lancamentoRepository.filtrar(lancamentoFilter);
 	}
 	
 	@PostMapping

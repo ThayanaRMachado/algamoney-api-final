@@ -35,7 +35,7 @@ public class Lancamento {
 
 	@NotNull
 	private BigDecimal valor;
-	private String observação;
+	private String observacao;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -91,12 +91,12 @@ public class Lancamento {
 		this.valor = valor;
 	}
 
-	public String getObservação() {
-		return observação;
+	public String getObservacao() {
+		return observacao;
 	}
 
 	public void setObservação(String observação) {
-		this.observação = observação;
+		this.observacao = observação;
 	}
 
 	public TipoLancamento getTipo() {
