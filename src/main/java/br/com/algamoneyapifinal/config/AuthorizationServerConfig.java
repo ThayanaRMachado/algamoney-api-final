@@ -9,7 +9,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration //Classe de configuração.
 @EnableAuthorizationServer //Habilita a segurança. Essa anotação já vem com o @Configuration, portanto não é obrigatório colocá-la no código Só se quiser.
@@ -31,13 +32,22 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception { //Recebe o AuthorizationServerEndpointsConfigurer
-		endpoints.tokenStore(tokenStore()) //O Token será armazendo em um Token Store. Porque a aplicação Angular vai buscar o Token e vai mandá-lo de volta p/ conseguir acessar a API(/lancamentos).O Token tem que estar armazenado em algum lugar, p/ saber se ele é válido ou inválido.
-		.authenticationManager(authenticationManager); //Para validar o usuário e a senha e ver se está tudo certo.
+		endpoints
+			.tokenStore(tokenStore()) //O Token será armazendo em um Token Store. Porque a aplicação Angular vai buscar o Token e vai mandá-lo de volta p/ conseguir acessar a API(/lancamentos).O Token tem que estar armazenado em algum lugar, p/ saber se ele é válido ou inválido.
+			.accessTokenConverter(accessTokenConverter())
+			.authenticationManager(authenticationManager); //Para validar o usuário e a senha e ver se está tudo certo.
+	}
+	
+	@Bean
+	public JwtAccessTokenConverter accessTokenConverter() {
+		JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
+		accessTokenConverter.setSigningKey("algaworks");
+		return accessTokenConverter;
 	}
 
 	@Bean
 	public TokenStore tokenStore() { //Onde o Token será armazenado.
-		return new InMemoryTokenStore(); //O armazenamento ocorrerá em memória. Poderia ser feito no banco de dados também.
+		return new JwtTokenStore(accessTokenConverter());
 	}
 
 
