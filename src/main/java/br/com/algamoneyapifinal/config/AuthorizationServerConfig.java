@@ -30,8 +30,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.secret("$2a$10$G1j5Rf8aEEiGc/AET9BA..xRR.qCpOUzBZoJd8ygbGy6tb3jsMT9G") //Senha do Client encriptada
 		.scopes("read", "write") //uma String define o escopo do cliente. Com ele, pode-se evitar o acesso do cliente angular.Podem ser definidos escopos != p/ clientes !=. O tratamento dessas Strings é feito nos métodos.
 		.authorizedGrantTypes("password", "refresh_token") //Tipos de concessão autorizados-O usuário digita usuário e senha na tela do Angular e o Angular no JavaScript recebe esse usuário e senha e envia p/ pegar o Access Token.O Angular tem acesso ao usuário e à senha. Isso só é feito qdo. se tem extrema confiança na aplicação. Como a aplicação Angular será feita no curso, essa é a configuração ideal p/ utilizar.**Adicionar o novo granType chamado refresh_token. será possível usar o Refresh Token para fornecer o Access Token.
-		.accessTokenValiditySeconds(20) //Tempo de vida do Access Token.
-		.refreshTokenValiditySeconds(3600 * 24); //Tempo de vida do Refresh Token, que será de 1 dia.		
+		.accessTokenValiditySeconds(1800) //Tempo de vida do Access Token.
+		.refreshTokenValiditySeconds(3600 * 24) //Tempo de vida do Refresh Token, que será de 1 dia.
+		.and() //Adição de um novo Client
+		.withClient("mobile") //qual é o nome do Client
+		.secret("$2a$10$lHy.UrHOegN7cCaaWx0m0uboVHiyucPJm/z4WZttsjE5x70Uu67JK") //Senha do Client encriptada
+		.scopes("read") //Escopo read
+		.authorizedGrantTypes("password", "refresh_token") //Tipos de concessão autorizados-O usuário digita usuário e senha na tela do Angular e o Angular no JavaScript recebe esse usuário e senha e envia p/ pegar o Access Token.O Angular tem acesso ao usuário e à senha. Isso só é feito qdo. se tem extrema confiança na aplicação. Como a aplicação Angular será feita no curso, essa é a configuração ideal p/ utilizar.**Adicionar o novo granType chamado refresh_token. será possível usar o Refresh Token para fornecer o Access Token.
+		.accessTokenValiditySeconds(1800) //Tempo de vida do Access Token.
+		.refreshTokenValiditySeconds(3600 * 24); //Tempo de vida do Refresh Token, que será de 1 dia.
 	}
 
 	@Override
