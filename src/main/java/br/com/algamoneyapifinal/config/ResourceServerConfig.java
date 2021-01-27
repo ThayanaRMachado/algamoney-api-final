@@ -1,25 +1,15 @@
 package br.com.algamoneyapifinal.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 @Configuration //Classe de configuração.
-@EnableWebSecurity //Habilita a segurança. Essa anotação já vem com o @Configuration, portanto não é obrigatório colocá-la no código Só se quiser.
 @EnableResourceServer //Habilita o Resource Server.
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter{ //ResourceServerConfig vai exercer a função do Resource Server.Com o ResourceServerConfigurerAdapter, ganha-se alguns métodos p/ customizar a configuração.
-
-	@Autowired //Injeta o AuthenticationManagerBuilder
-	public void configure(AuthenticationManagerBuilder auth) throws Exception { //Construtor de gerenciador de autenticação
-		auth.inMemoryAuthentication() //Onde o usuário e a senha serão validados. Pode-se buscar no banco de dados, mas aqui ficará em memória.
-		.withUser("admin").password("admin").roles("ROLE"); //Na autenticação em memória passa-se o usuário, a senha, (para uma autenticação) e uma permissão, (para uma autorização), que esse usuário poderia ter.A permissão não será utilizada agora.
-	}
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception { //Configura as autorizações das requisições
