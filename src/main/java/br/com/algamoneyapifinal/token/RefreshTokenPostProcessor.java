@@ -54,5 +54,4 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 		resp.addCookie(refreshTokenCookie); //Adiciona o Cookie na resposta.
 	}
 
-
 }
