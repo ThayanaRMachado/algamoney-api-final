@@ -1,5 +1,7 @@
 package br.com.algamoneyapifinal.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +11,13 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+
+import br.com.algamoneyapifinal.config.token.CustomTokenEnhacer;
 
 @Configuration //Classe de configuração.
 @EnableAuthorizationServer //Habilita a segurança. Essa anotação já vem com o @Configuration, portanto não é obrigatório colocá-la no código Só se quiser.
@@ -43,11 +49,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception { //Recebe o AuthorizationServerEndpointsConfigurer
+		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain(); //Cria um objeto token com mais detalhes. 
+		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter())); //Cria uma cadeia de objetos que vão trabalhar com o token. O tokenEnhacer vai customizar o token.
+		
 		endpoints
 			.tokenStore(tokenStore()) //O Token será armazendo em um Token Store. Porque a aplicação Angular vai buscar o Token e vai mandá-lo de volta p/ conseguir acessar a API(/lancamentos).O Token tem que estar armazenado em algum lugar, p/ saber se ele é válido ou inválido.
-			.accessTokenConverter(accessTokenConverter())
+			.tokenEnhancer(tokenEnhancerChain) //O Token passado aqui não é mais o access token, é o token enhancer.
 			.reuseRefreshTokens(false) //Sempre q/ pedir um novo Access Token com Refresh Token, um novo Reresh Token será enviado. A ideia é que o usuário não se deslogue da aplicação enquanto estiver usando. Se ele usa a aplicação todos os dias, o Refresh Token não expira e é possível buscar novos Access Tokens p/ usar na API. Se não foi settado como false, o refresh Token vai durar apenas 24 horas.  
-			.userDetailsService(this.userDetailsService)
 			.authenticationManager(authenticationManager); //Para validar o usuário e a senha e ver se está tudo certo.
 	}
 	
@@ -62,5 +70,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public TokenStore tokenStore() { //Onde o Token será armazenado.
 		return new JwtTokenStore(accessTokenConverter());
 	}
+	
+	@Bean
+	public TokenEnhancer tokenEnhancer() {
+		return new CustomTokenEnhacer();
+	}
+
 
 }
